@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import ru.averkiev.authservice.models.User;
 import ru.averkiev.authservice.repositories.UserRepository;
 import ru.averkiev.authservice.security.MyUserDetails;
-
 import java.util.Optional;
 
 @Service
