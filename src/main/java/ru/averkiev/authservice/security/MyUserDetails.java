@@ -49,7 +49,7 @@ public class MyUserDetails implements UserDetails {
         return true;
     }
 
-    protected User getUser() {
+    public User getUser() {
         return this.user;
     }
 }

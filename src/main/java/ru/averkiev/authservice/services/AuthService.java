@@ -1,13 +1,12 @@
 package ru.averkiev.authservice.services;
 
+import io.jsonwebtoken.Claims;
 import jakarta.security.auth.message.AuthException;
 import jakarta.validation.constraints.NotNull;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import ru.averkiev.authservice.security.JwtProvider;
-import ru.averkiev.authservice.security.JwtRequest;
-import ru.averkiev.authservice.security.JwtResponse;
-import ru.averkiev.authservice.security.MyUserDetails;
+import ru.averkiev.authservice.models.User;
+import ru.averkiev.authservice.security.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,9 +38,41 @@ public class AuthService {
         }
     }
 
+    public JwtResponse getAccessToken(@NotNull String refreshToken) {
+        if (jwtProvider.validateRefreshToken(refreshToken)) {
+            final Claims claims = jwtProvider.getRefreshClaims(refreshToken);
+            final String login = claims.getSubject();
+            final String saveRefreshToken = refreshStorage.get(login);
 
-    // getAccessToken
-    // refresh
-    // getAuthInfo
+            if (saveRefreshToken != null && saveRefreshToken.equals(refreshToken)) {
+                final User user = (User) userDetailsService.loadUserByUsername(login);
+                final String accessToken = jwtProvider.generateAccessToken(user);
+                return new JwtResponse(accessToken, null);
+            }
+        }
 
+        return new JwtResponse(null, null);
+    }
+
+    public JwtResponse refresh(@NotNull String refreshToken) throws AuthException {
+        if (jwtProvider.validateRefreshToken(refreshToken)) {
+            final Claims claims = jwtProvider.getRefreshClaims(refreshToken);
+            final String login = claims.getSubject();
+            final String saveRefreshToken = refreshStorage.get(login);
+
+            if (saveRefreshToken != null && saveRefreshToken.equals(refreshToken)) {
+                final User user = (User) userDetailsService.loadUserByUsername(login);
+                final String accessToken = jwtProvider.generateAccessToken(user);
+                final String newRefreshToken = jwtProvider.generateRefreshToken(user);
+                refreshStorage.put(user.getLogin(), newRefreshToken);
+                return new JwtResponse(accessToken, newRefreshToken);
+            }
+        }
+
+        throw new AuthException("Неверный JWT токен");
+    }
+
+    public JwtAuthentication getAuthInfo() {
+        return (JwtAuthentication) SecurityContextHolder.getContext().getAuthentication();
+    }
 }
