@@ -12,7 +12,7 @@ public class JwtAuthentication implements Authentication {
     private boolean authenticated;
     private String username;
     private String email;
-    private Role role;
+    private String role;
 
     public String getUsername() {
         return username;
@@ -30,17 +30,17 @@ public class JwtAuthentication implements Authentication {
         this.email = email;
     }
 
-    public Role getRole() {
+    public String getRole() {
         return role;
     }
 
-    public void setRole(Role role) {
+    public void setRole(String role) {
         this.role = role;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(role);
+        return null;
     }
 
     @Override

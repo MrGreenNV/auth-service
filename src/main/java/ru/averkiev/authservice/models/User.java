@@ -7,7 +7,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
 
 @Entity
-@Table(name = "User")
+@Table(name = "my_user")
 public class User {
 
     @Id
@@ -28,12 +28,12 @@ public class User {
 
     @NotEmpty
     @Column(name = "role")
-    private Role role;
+    private String role;
 
     public User() {
     }
 
-    public User(String login, String password, String email, Role role) {
+    public User(String login, String password, String email, String role) {
         this.login = login;
         this.password = password;
         this.email = email;
@@ -72,11 +72,11 @@ public class User {
         this.email = email;
     }
 
-    public Role getRole() {
+    public String getRole() {
         return role;
     }
 
-    public void setRole(Role role) {
+    public void setRole(String role) {
         this.role = role;
     }
 }
