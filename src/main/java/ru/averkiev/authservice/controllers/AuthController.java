@@ -1,6 +1,7 @@
 package ru.averkiev.authservice.controllers;
 
 import jakarta.security.auth.message.AuthException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,16 +14,13 @@ import ru.averkiev.authservice.services.AuthService;
 
 @RestController
 @RequestMapping("api/auth")
+@RequiredArgsConstructor
 public class AuthController {
 
     private final AuthService authService;
 
-    public AuthController(AuthService authService) {
-        this.authService = authService;
-    }
-
     @PostMapping("login")
-    public ResponseEntity<JwtResponse> login(@RequestBody JwtRequest authRequest) throws AuthException {
+    public ResponseEntity<JwtResponse> login(@RequestBody JwtRequest authRequest) {
         final JwtResponse token = authService.login(authRequest);
         return ResponseEntity.ok(token);
     }
@@ -34,7 +32,7 @@ public class AuthController {
     }
 
     @PostMapping("refresh")
-    public ResponseEntity<JwtResponse> getNewRefreshToken(@RequestBody RefreshJwtRequest request) throws AuthException {
+    public ResponseEntity<JwtResponse> getNewRefreshToken(@RequestBody RefreshJwtRequest request) {
         final JwtResponse token = authService.refresh(request.getRefreshToken());
         return ResponseEntity.ok(token);
     }
