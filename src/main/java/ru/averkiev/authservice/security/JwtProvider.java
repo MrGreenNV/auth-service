@@ -3,7 +3,9 @@ package ru.averkiev.authservice.security;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.validation.constraints.NotNull;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -16,6 +18,12 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 
+
+/**
+ * Данный класс для генерации и валидации access и refresh токенов.
+ */
+
+@Slf4j
 @Component
 public class JwtProvider {
 
@@ -37,8 +45,8 @@ public class JwtProvider {
                 .setSubject(user.getLogin())
                 .setExpiration(accessExpiration)
                 .signWith(jwtAccessSecret)
-                .claim("role", user.getRole())
-                .claim("email", user.getEmail())
+                .claim("roles", user.getRoles())
+                .claim("firstname", user.getFirstname())
                 .compact();
     }
 
@@ -69,13 +77,15 @@ public class JwtProvider {
                     .parseClaimsJws(token);
             return true;
         } catch (ExpiredJwtException expEx) {
-            System.out.println("Token expired");
+            log.error("Token expired", expEx);
         } catch (UnsupportedJwtException unsEx) {
-            System.out.println("Unsupported jwt");
+            log.error("Unsupported jwt", unsEx);
         } catch (MalformedJwtException mjEx) {
-            System.out.println("Malformed jwt");
+            log.error("Malformed jwt", mjEx);
+        } catch (SignatureException sEx) {
+            log.error("Invalid signature", sEx);
         } catch (Exception e) {
-            System.out.println("invalid token");
+            log.error("Invalid token", e);
         }
         return false;
     }

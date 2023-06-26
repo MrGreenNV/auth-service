@@ -1,22 +1,15 @@
 package ru.averkiev.authservice.security;
 
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * Объект данного класса отправляется пользователем, для получеия JWT токена.
+ */
+
+@Setter
+@Getter
 public class JwtRequest {
     private String login;
     private String password;
-
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }

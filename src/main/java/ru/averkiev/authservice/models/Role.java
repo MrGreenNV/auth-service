@@ -1,15 +1,13 @@
 package ru.averkiev.authservice.models;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 
+@RequiredArgsConstructor
 public enum Role implements GrantedAuthority {
 
     ADMIN("ADMIN"),
     USER("USER");
-
-    Role(String vale) {
-        this.vale = vale;
-    }
 
     private final String vale;
 
