@@ -1,46 +1,26 @@
 package ru.averkiev.authservice.security;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import ru.averkiev.authservice.models.Role;
 
 import java.util.Collection;
-import java.util.Collections;
+import java.util.Set;
 
+@Getter
+@Setter
 public class JwtAuthentication implements Authentication {
 
     private boolean authenticated;
     private String username;
-    private String email;
-    private String role;
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
+    private String firstname;
+    private Set<Role> roles;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return roles;
     }
 
     @Override
@@ -65,11 +45,11 @@ public class JwtAuthentication implements Authentication {
 
     @Override
     public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
-
+        this.authenticated = isAuthenticated;
     }
 
     @Override
     public String getName() {
-        return email;
+        return firstname;
     }
 }
