@@ -8,7 +8,7 @@ public interface UserServiceInterface {
 
     User register(User user);
 
-    User update(User newUser);
+    User update(int id, User updateUser);
 
     List<User> getAll();
 
