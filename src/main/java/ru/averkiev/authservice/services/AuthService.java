@@ -18,7 +18,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AuthService {
 
-    private final UserService userService;
     private final UserServiceImpl userServiceImpl;
     private final Map<String, String> refreshStorage = new HashMap<>();
     private final JwtProvider jwtProvider;
@@ -26,23 +25,11 @@ public class AuthService {
 
     public JwtResponse login(@NotNull JwtRequest authRequest) {
 
-//        final User user = userService.getByLogin(authRequest.getLogin())
-//                .orElseThrow(() -> new AuthException("Пользователь не найден."));
-
-//        if (user.getPassword().equals(authRequest.getPassword())) {
-//            final String accessToken = jwtProvider.generateAccessToken(user);
-//            final String refreshToken = jwtProvider.generateRefreshToken(user);
-//            refreshStorage.put(user.getLogin(), refreshToken);
-//            return new JwtResponse(accessToken, refreshToken);
-//        } else {
-//            throw new AuthException("Неправильный пароль!");
-//        }
-
         final User user = userServiceImpl.findByLogin(authRequest.getLogin());
 
         if (passwordEncoder.matches(authRequest.getPassword(), user.getPassword())) {
-            final String accessToken = jwtProvider.generateAccessToken(user);
-            final String refreshToken = jwtProvider.generateRefreshToken(user);
+            final String accessToken = jwtProvider.generateAccessToken(JwtUserFactory.created(user));
+            final String refreshToken = jwtProvider.generateRefreshToken(JwtUserFactory.created(user));
             refreshStorage.put(user.getLogin(), refreshToken);
             return new JwtResponse(accessToken, refreshToken);
         } else {
@@ -57,9 +44,8 @@ public class AuthService {
             final String saveRefreshToken = refreshStorage.get(login);
 
             if (saveRefreshToken != null && saveRefreshToken.equals(refreshToken)) {
-                final User user = userService.getByLogin(login)
-                        .orElseThrow(() -> new AuthException("Пользователь не найден."));
-                final String accessToken = jwtProvider.generateAccessToken(user);
+                final User user = userServiceImpl.findByLogin(login);
+                final String accessToken = jwtProvider.generateAccessToken(JwtUserFactory.created(user));
                 return new JwtResponse(accessToken, null);
             }
         }
@@ -73,10 +59,9 @@ public class AuthService {
             final String saveRefreshToken = refreshStorage.get(login);
 
             if (saveRefreshToken != null && saveRefreshToken.equals(refreshToken)) {
-                final User user = userService.getByLogin(login)
-                        .orElseThrow(() -> new AuthException("Пользователь не найден."));
-                final String accessToken = jwtProvider.generateAccessToken(user);
-                final String newRefreshToken = jwtProvider.generateRefreshToken(user);
+                final User user = userServiceImpl.findByLogin(login);
+                final String accessToken = jwtProvider.generateAccessToken(JwtUserFactory.created(user));
+                final String newRefreshToken = jwtProvider.generateRefreshToken(JwtUserFactory.created(user));
                 refreshStorage.put(user.getLogin(), newRefreshToken);
                 return new JwtResponse(accessToken, newRefreshToken);
             }
