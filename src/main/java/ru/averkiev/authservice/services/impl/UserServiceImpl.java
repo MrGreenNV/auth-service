@@ -11,7 +11,6 @@ import ru.averkiev.authservice.repositories.RoleRepository;
 import ru.averkiev.authservice.repositories.UserRepository;
 import ru.averkiev.authservice.services.UserServiceInterface;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -43,26 +42,52 @@ public class UserServiceImpl implements UserServiceInterface {
 
     @Override
     public User update(int id, User updateUser) {
-        return null;
+        updateUser.setId(id);
+        userRepository.save(updateUser);
+        log.info("IN update - user: {} successfully updated", updateUser);
+        return updateUser;
     }
 
     @Override
     public List<User> getAll() {
-        return null;
+        List<User> users = userRepository.findAll();
+        log.info("IN getAll - {} users found", users.size());
+        return users;
     }
 
     @Override
     public User findByLogin(String login) {
-        return null;
+        User user = userRepository.findByLogin(login);
+        log.info("IN findByLogin - user: {} found by login: {}", user, login);
+        return user;
     }
 
     @Override
     public User findById(int id) {
-        return null;
+        User user = userRepository.findById(id).orElse(null);
+
+        if (user == null) {
+            log.warn("IN findByLogin - no user found by id: {}", id);
+            return null;
+        }
+
+        log.info("IN findByLogin - user: {} found by id: {}", user, id);
+        return user;
     }
 
     @Override
     public boolean delete(int id) {
-        return false;
+
+        User user = userRepository.findById(id).orElse(null);
+
+        if (user == null) {
+            log.warn("IN delete - no user found by id: {}", id);
+            return false;
+        }
+
+        userRepository.deleteById(id);
+        log.info("IN delete - user with id: {} successfully deleted", id);
+
+        return true;
     }
 }
