@@ -3,10 +3,8 @@ package ru.averkiev.authservice.services;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.averkiev.authservice.models.Role;
 import ru.averkiev.authservice.models.User;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
