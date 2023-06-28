@@ -9,8 +9,9 @@ import ru.averkiev.authservice.models.Status;
 import ru.averkiev.authservice.models.User;
 import ru.averkiev.authservice.repositories.RoleRepository;
 import ru.averkiev.authservice.repositories.UserRepository;
-import ru.averkiev.authservice.services.UserServiceInterface;
+import ru.averkiev.authservice.services.UserService;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,7 +19,7 @@ import java.util.Set;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserServiceInterface {
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
@@ -34,15 +35,23 @@ public class UserServiceImpl implements UserServiceInterface {
         user.setRoles(userRoles);
         user.setStatus(Status.ACTIVE);
 
-        User registeredUser = userRepository.save(user);
+        Date now = new Date();
 
-        log.info("IN register - user: {} successfully registered", registeredUser);
-        return registeredUser;
+        user.setCreated(now);
+        user.setUpdated(now);
+
+        userRepository.save(user);
+
+        log.info("IN register - user: {} successfully registered", user);
+
+        return user;
     }
 
     @Override
     public User update(int id, User updateUser) {
         updateUser.setId(id);
+        updateUser.setUpdated(new Date());
+
         userRepository.save(updateUser);
         log.info("IN update - user: {} successfully updated", updateUser);
         return updateUser;

@@ -18,8 +18,12 @@ public class UsersController {
 
     @PostMapping()
     public ResponseEntity<User> register(@RequestBody User user) {
-        System.out.println("tut");
         return ResponseEntity.ok(userService.register(user));
+    }
+
+    @PostMapping("/{id}")
+    public ResponseEntity<User> update(@RequestParam int id, @RequestBody User user) {
+        return ResponseEntity.ok(userService.update(id, user));
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")

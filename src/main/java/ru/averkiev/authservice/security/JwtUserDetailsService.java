@@ -7,18 +7,18 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.averkiev.authservice.models.User;
-import ru.averkiev.authservice.services.UserServiceInterface;
+import ru.averkiev.authservice.services.UserService;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class JwtUserDetailsService implements UserDetailsService {
 
-    private final UserServiceInterface userServiceInterface;
+    private final UserService userService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userServiceInterface.findByLogin(username);
+        User user = userService.findByLogin(username);
 
         if (user == null) {
             throw new UsernameNotFoundException("User with username: " + username + " not found");
