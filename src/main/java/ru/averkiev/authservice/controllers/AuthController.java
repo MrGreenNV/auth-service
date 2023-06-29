@@ -35,5 +35,4 @@ public class AuthController {
         final JwtResponse token = authService.refresh(request.getRefreshToken());
         return ResponseEntity.ok(token);
     }
-
 }
