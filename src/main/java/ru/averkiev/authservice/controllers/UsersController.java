@@ -22,7 +22,7 @@ public class UsersController {
     }
 
     @PostMapping("/{id}")
-    public ResponseEntity<User> update(@RequestParam int id, @RequestBody User user) {
+    public ResponseEntity<User> update(@PathVariable int id, @RequestBody User user) {
         return ResponseEntity.ok(userService.update(id, user));
     }
 

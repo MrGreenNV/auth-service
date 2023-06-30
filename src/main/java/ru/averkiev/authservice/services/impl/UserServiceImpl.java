@@ -2,6 +2,7 @@ package ru.averkiev.authservice.services.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.averkiev.authservice.models.RoleClass;
@@ -49,8 +50,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User update(int id, User updateUser) {
+        User user = userRepository.findById(id).orElse(null);
+
+        if (user ==null) {
+            throw new UsernameNotFoundException("User with id: " + id + " not found");
+        }
+
         updateUser.setId(id);
         updateUser.setUpdated(new Date());
+        updateUser.setCreated(user.getCreated());
+        updateUser.setStatus(user.getStatus());
+        updateUser.setRoles(user.getRoles());
+        updateUser.setPassword(passwordEncoder.encode(updateUser.getPassword()));
 
         userRepository.save(updateUser);
         log.info("IN update - user: {} successfully updated", updateUser);
